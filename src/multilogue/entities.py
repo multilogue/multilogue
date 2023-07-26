@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 """
 
 
-class Entity:
+class Entity(object):
     """ Human or other entity, participating in the multilogue """
 
     name:           str = ''
@@ -19,6 +19,7 @@ class Entity:
     def __init__(self, *args, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
+        super(Entity, self).__init__()
 
     def __call__(self, **kwargs):
         for key, value in kwargs.items():
