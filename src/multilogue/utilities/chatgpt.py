@@ -17,12 +17,27 @@ api_type        = environ.get("OPENAI_API_TYPE", "open_ai")
 default_model   = environ.get("OPENAI_DEFAULT_MODEL", "gpt-3.5-turbo-0613")
 
 
-def answer(messages, functions=None, function_call=None, model=default_model):
+def answer( messages,
+            functions=None,
+            function_call=None,
+            model=default_model,
+            **kwargs):
+
+    """A simple requests call to ChatGPT.
+        kwargs:
+            temperature     = 0 to 1.0
+            top_p           = 0.0 to 1.0
+            n               = 1 to ...
+            frequency_penalty = -2.0 to 2.0
+            presence_penalty = -2.0 to 2.0
+            max_tokens      = number of tokens
+    """
     headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + api_key,
+        "Organization": organization
     }
-    json_data = {"model": model, "messages": messages}
+    json_data = {"model": model, "messages": messages} | kwargs
     if functions is not None:
         json_data.update({"functions": functions})
     if function_call is not None:
@@ -33,6 +48,7 @@ def answer(messages, functions=None, function_call=None, model=default_model):
             headers=headers,
             json=json_data,
         )
+
         return response
     except Exception as e:
         print("Unable to generate ChatCompletion response")
