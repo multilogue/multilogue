@@ -3,7 +3,7 @@ requires = ["setuptools>=67.0"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "multilogue"
-version = "0.0.3"
+version = "0.0.5"
 authors = [
     {name="Alexander Fedotov", email="alex.fedotov@aol.com"},
 ]
@@ -14,6 +14,10 @@ classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+]
+keywords = ["multilogue", "multilectic", "conversation", "ai"]
+dependencies = [
+    "requests >= 2.30.0",
 ]
 [project.urls]
 "Homepage" = "https://github.com/multilogue/multilogue"
