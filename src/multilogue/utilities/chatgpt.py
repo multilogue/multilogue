@@ -8,10 +8,12 @@ LICENSE file in the root directory of this source tree.
 from os import environ
 import requests
 
-api_key         = environ.get("OPENAI_API_KEY")
+api_key         = environ.get("OPENAI_API_KEY"
+                              )
 api_key_path    = environ.get("OPENAI_API_KEY_PATH")
 
 organization    = environ.get("OPENAI_ORGANIZATION")
+organization_id = environ.get("OPENAI_ORGANIZATION_ID")
 api_base        = environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 api_type        = environ.get("OPENAI_API_TYPE", "open_ai")
 default_model   = environ.get("OPENAI_DEFAULT_MODEL", "gpt-3.5-turbo-0613")
