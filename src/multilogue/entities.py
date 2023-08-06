@@ -43,3 +43,27 @@ class Entity(object):
             name - {self.name},
             role - {self.role},
             """
+
+
+class Human(object):
+    """ Human participating in the multilogue """
+    name:           str = ''
+    role:           str = ''
+
+    def __init__(self, *args, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        super(Human, self).__init__()
+
+    def __call__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        return self
+
+    def answer(self, *args, **kwargs):
+        """ Answer the last statement """
+        pass
+
+    def listen(self, *args, **kwargs):
+        """ Listen to the last statement """
+        pass
