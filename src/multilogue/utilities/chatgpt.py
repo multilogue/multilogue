@@ -5,8 +5,11 @@
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
+from typing import List, Dict
 from os import environ
 import requests
+import tiktoken
+import openai
 
 api_key             = environ.get("OPENAI_API_KEY")
 api_key_path        = environ.get("OPENAI_API_KEY_PATH")
@@ -17,6 +20,7 @@ api_base            = environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"
 api_type            = environ.get("OPENAI_API_TYPE", "open_ai")
 default_model       = environ.get("OPENAI_DEFAULT_MODEL", "gpt-3.5-turbo-0613")
 completion_model    = environ.get("OPENAI_COMPLETION_MODEL",'text-davinci-003')
+embedding_model     = environ.get("OPENAI_EMBEDDING_MODEL",'text-embedding-ada-002')
 
 headers = {
     "Content-Type": "application/json",
@@ -52,8 +56,7 @@ def answer(messages,
         )
         if response.status_code == requests.codes.ok:
             for choice in response.json()['choices']:
-                obj = choice.to_dict_recursive()
-                responses.append(obj)
+                responses.append(choice)
         else:
             print(f"Request status code: {response.status_code}")
         return responses
@@ -101,7 +104,7 @@ def fill_in(prompt,
 
 def complete(prompt,
              model=completion_model,
-             **kwargs):
+             **kwargs) -> List:
 
     """A completion call through requests.
         kwargs:
@@ -112,7 +115,9 @@ def complete(prompt,
             frequency_penalty = -2.0 to 2.0
             presence_penalty = -2.0 to 2.0
             max_tokens      = number of tokens
-            stop = ["stop"]  # array of up to 4 sequences
+            logprobs        = number up to 5
+            stop            = ["stop"]  array of up to 4 sequences
+            logit_bias      = map token: bias -1.0 to 1.0 (restrictive -100 to 100)
     """
     responses = []
     json_data = {"model": model, "prompt": prompt} | kwargs
@@ -134,30 +139,79 @@ def complete(prompt,
         return responses
 
 
+def count_tokens(string: str, model=default_model) -> int:
+    """Returns the number of tokens in a text string."""
+    encoding = tiktoken.encoding_for_model(model)
+    num_tokens = len(encoding.encode(string))
+    return num_tokens
+
+
+def embeddings(input_list: List[str], model=embedding_model, **kwargs) -> List[Dict]:
+    """Returns the embedding of a text string.
+        kwargs:
+        user = string
+    """
+    embeddings_list = []
+    json_data = {"model": model, "input": input_list} | kwargs
+    try:
+        response = requests.post(
+            f"{api_base}/embeddings",
+            headers=headers,
+            json=json_data,
+        )
+        if response.status_code == requests.codes.ok:
+            embeddings_list\
+                = response.json()['data']
+        else:
+            print(f"Request status code: {response.status_code}")
+        return embeddings_list
+    except Exception as e:
+        print("Unable to generate Completion response")
+        print(f"Exception: {e}")
+        return embeddings_list
+
+
 if __name__ == '__main__':
-    prompt1 = 'Say this is a test.'
-    suffix1 = 'That is why it does nothing.'
-    kwa = {
-        "temperature":      0.5,
-        "top_p":            0.95,
-        "max_tokens":       30,
-        "n":                3,
-        "best_of":          4,
-        "frequency_penalty": 2.0,
-        "presence_penalty": 2.0
+    prompt1 = 'Can human nature be changed?'
+    suffix1 = 'It does nothing.'
+    # bias the words "Yes" and "No" or the new line "\n".
+    bias = {
+        # 5297: 1.0,          # Yes
+        # 2949: -100.0,     # No
+        # 198: -1.0         # /n
     }
+    kwa = {
+        "temperature":      2.0,  # up to 2.0
+        # "top_p":            0.5,  # up to 1.0
+        "max_tokens":       50,
+        "n":                3,
+        # "best_of":          4,
+        "frequency_penalty": 2.0,
+        "presence_penalty": 2.0,
+        # "logprobs":         3,  # up to 5
+        # "logit_bias":       bias
+        "stop": ["stop"]
+    }
+
     msgs = [
+        {
+            "role": "system",
+            "content": "You are an eloquent assistant. Give concise but substantive answers without introduction and conclusion."
+        },
         {
             "role": "user",
             "content": prompt1
         }
     ]
-    answers1 = fill_in(prompt=prompt1,
-                       suffix='',
-                       **kwa)
+    inp = [prompt1, suffix1]
+    # emb = embeddings(inp)
+    # num = count_tokens(prompt1)
+    # answers1 = fill_in(prompt=prompt1,
+    #                    suffix='',
+    #                    **kwa)
 
-    answers2 = complete(prompt=prompt1,
-                        **kwa)
+    # answers2 = complete(prompt=prompt1,  # model='gpt-3.5-turbo-instruct',
+    #                     **kwa)
 
-    answers3 = answer(messages=msgs)
+    answers3 = answer(messages=msgs, **kwa)
     print('ok')
