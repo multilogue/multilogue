@@ -35,7 +35,7 @@ def answer(messages,
            model=default_model,
            **kwargs):
 
-    """A simple requests call to ChatGPT.
+    """A simple requests call to ChatGPT chat completions endpoint.
         kwargs:
             temperature     = 0 to 1.0
             top_p           = 0.0 to 1.0
@@ -67,11 +67,12 @@ def answer(messages,
         return responses
 
 
-def fill_in(prompt,
-            suffix,
+def fill_in(text_before,
+            text_after,
             model=completion_model,
             **kwargs):
-    """A completion call through requests.
+
+    """A completions endpoint call through requests.
         kwargs:
             temperature     = 0 to 1.0
             top_p           = 0.0 to 1.0
@@ -83,7 +84,7 @@ def fill_in(prompt,
             stop = ["stop"]  # array of up to 4 sequences
     """
     responses = []
-    json_data = {"model": model, "prompt": prompt, "suffix": suffix} | kwargs
+    json_data = {"model": model, "prompt": text_before, "suffix": text_after} | kwargs
     try:
         response = requests.post(
             f"{api_base}/completions",
@@ -102,11 +103,11 @@ def fill_in(prompt,
         return responses
 
 
-def complete(prompt,
-             model=completion_model,
-             **kwargs) -> List:
+def continuations(text_before,
+                 model=completion_model,
+                 **kwargs) -> List:
 
-    """A completion call through requests.
+    """A completions endpoint call through requests.
         kwargs:
             temperature     = 0 to 1.0
             top_p           = 0.0 to 1.0
@@ -120,7 +121,7 @@ def complete(prompt,
             logit_bias      = map token: bias -1.0 to 1.0 (restrictive -100 to 100)
     """
     responses = []
-    json_data = {"model": model, "prompt": prompt} | kwargs
+    json_data = {"model": model, "prompt": text_before} | kwargs
     try:
         response = requests.post(
             f"{api_base}/completions",
@@ -134,7 +135,7 @@ def complete(prompt,
             print(f"Request status code: {response.status_code}")
         return responses
     except Exception as e:
-        print("Unable to generate Completion response")
+        print("Unable to generate Completions response")
         print(f"Exception: {e}")
         return responses
 
@@ -160,20 +161,19 @@ def embeddings(input_list: List[str], model=embedding_model, **kwargs) -> List[D
             json=json_data,
         )
         if response.status_code == requests.codes.ok:
-            embeddings_list\
-                = response.json()['data']
+            embeddings_list = response.json()['data']
         else:
             print(f"Request status code: {response.status_code}")
         return embeddings_list
     except Exception as e:
-        print("Unable to generate Completion response")
+        print("Unable to generate Embeddings response")
         print(f"Exception: {e}")
         return embeddings_list
 
 
 if __name__ == '__main__':
-    prompt1 = 'Can human nature be changed?'
-    suffix1 = 'It does nothing.'
+    the_text_before = 'Can human nature be changed?'
+    the_text_after = 'That is why human nature can not be changed.'
     # bias the words "Yes" and "No" or the new line "\n".
     bias = {
         # 5297: 1.0,          # Yes
@@ -181,11 +181,11 @@ if __name__ == '__main__':
         # 198: -1.0         # /n
     }
     kwa = {
-        "temperature":      2.0,  # up to 2.0
+        "temperature":      1.0,  # up to 2.0
         # "top_p":            0.5,  # up to 1.0
-        "max_tokens":       50,
+        "max_tokens":       256,
         "n":                3,
-        # "best_of":          4,
+        "best_of":          4,
         "frequency_penalty": 2.0,
         "presence_penalty": 2.0,
         # "logprobs":         3,  # up to 5
@@ -200,18 +200,21 @@ if __name__ == '__main__':
         },
         {
             "role": "user",
-            "content": prompt1
+            "content": the_text_before
         }
     ]
-    inp = [prompt1, suffix1]
-    # emb = embeddings(inp)
+    # inp = [the_text_after, the_text_after]
+    # emb = embeddings(inp, model='text-similarity-davinci-001')
+    #
     # num = count_tokens(prompt1)
-    # answers1 = fill_in(prompt=prompt1,
-    #                    suffix='',
-    #                    **kwa)
+    #
+    # connections = fill_in(text_before=text_before,
+    #                       text_after=text_after,
+    #                       **kwa)
 
-    # answers2 = complete(prompt=prompt1,  # model='gpt-3.5-turbo-instruct',
-    #                     **kwa)
+    continuations = continuations(text_before=the_text_before,
+                                  # model='gpt-3.5-turbo-instruct',
+                                  **kwa)
 
-    answers3 = answer(messages=msgs, **kwa)
+    answers = answer(messages=msgs, **kwa)
     print('ok')

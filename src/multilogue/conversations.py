@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 from typing import List, Dict
 
 
-class Phrase(object):
+class Sentence(object):
     """ A phrase in a conversation """
     name: str
     whole_phrase: str
@@ -16,10 +16,10 @@ class Phrase(object):
     def __init__(self, *args, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
-        super(Phrase, self).__init__()
+        super(Sentence, self).__init__()
 
 
-class Thread(Phrase):
+class Thread(Sentence):
     """ A thread in a conversation.
         A thread can be temporarily 'tabled' until it's declared
         to be ended.
@@ -37,9 +37,12 @@ class Thread(Phrase):
 
 
 class Conversation(Thread):
+
     sequence: List
+
     def __init__(self):
         self.conversation_history = []
+        super(Conversation, self).__init__()
 
     def add_message(self, role, content):
         message = {"role": role, "content": content}
@@ -53,10 +56,5 @@ class Conversation(Thread):
             "function": "magenta",
         }
         for message in self.conversation_history:
-            print(
-                colored(
-                    f"{message['role']}: {message['content']}\n\n",
-                    role_to_color[message["role"]],
-                )
-            )
+            print(f"{message['role']}: {message['content']}\n\n")
 

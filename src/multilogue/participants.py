@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 from json import loads, dumps
 from multilectic import Position, Opinion
 from .entities import Entity, Human
+from .utilities import chatgpt
 
 
 class Facilitator(Human):
@@ -71,10 +72,11 @@ class Expert(Entity, Opinion):
         self.utterance = "I am an expert"
         super(Expert, self).__init__(**kwargs)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, **kwargs):
         content = kwargs.get('content', '')
-        arguments = loads(kwargs.get('arguments', ''))
-        ...
+        call = kwargs.get('function_call', '')
+        arguments = loads(call.get('arguments', ''))
+        self.utterance = ''  # chatgpt.answer()
         return self.utterance
 
     def __repr__(self):
