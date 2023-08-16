@@ -104,8 +104,8 @@ def fill_in(text_before,
 
 
 def continuations(text_before,
-                 model=completion_model,
-                 **kwargs) -> List:
+                  model=completion_model,
+                  **kwargs) -> List:
 
     """A completions endpoint call through requests.
         kwargs:
