@@ -6,6 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
 from typing import List, Dict
+from dataclasses import dataclass, field, asdict
+
+
+@dataclass
+class Message:
+    role:       str = field(default="user")
+    content:    str = field(default="This is a content of a message.")
+    name:       str = field(default="")
+
+    def to_dict(self):
+        return asdict(self)
 
 
 class Sentence(object):
@@ -44,9 +55,12 @@ class Conversation(Thread):
         self.conversation_history = []
         super(Conversation, self).__init__()
 
-    def add_message(self, role, content):
-        message = {"role": role, "content": content}
-        self.conversation_history.append(message)
+    def add_message(self, **kwargs):
+        if kwargs:
+            message = Message(kwargs)
+            self.conversation_history.append(message)
+        else:
+            pass
 
     def display_conversation(self, detailed=False):
         role_to_color = {
@@ -58,3 +72,7 @@ class Conversation(Thread):
         for message in self.conversation_history:
             print(f"{message['role']}: {message['content']}\n\n")
 
+
+if __name__ == "__main__":
+    message = Message(content="noncontent", name="Alex")
+    print(message.to_dict())
