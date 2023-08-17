@@ -19,6 +19,15 @@ class Message:
         return asdict(self)
 
 
+@dataclass
+class SystemMessage:
+    role:       str = field(default="system")
+    content:    str = field(default="This is a system message.")
+
+    def to_dict(self):
+        return asdict(self)
+
+
 class Sentence(object):
     """ A phrase in a conversation """
     name: str
