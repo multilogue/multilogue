@@ -59,6 +59,7 @@ def answer(messages,
                 responses.append(choice)
         else:
             print(f"Request status code: {response.status_code}")
+            print(response.json()['content'])
         return responses
 
     except Exception as e:
