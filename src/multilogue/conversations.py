@@ -51,6 +51,7 @@ class Thread(Sentence):
     put_forward: bool = False
 
     def __init__(self, *args, **kwargs):
+        
         for key, value in kwargs.items():
             setattr(self, key, value)
         super(Thread, self).__init__()
@@ -66,7 +67,7 @@ class Conversation(Thread):
 
     def add_message(self, **kwargs):
         if kwargs:
-            message = Message(kwargs)
+            message = Message(**kwargs)
             self.conversation_history.append(message)
         else:
             pass

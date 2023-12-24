@@ -5,7 +5,7 @@
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
-from .chatgpt import answer, fill_in, continuations
+from .openaia import answer, fill_in, continuations
 from .exceptions import (RefuseToAnswer,
                          InstructionRejected,
                          QuestionRejected)

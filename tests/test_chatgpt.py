@@ -6,7 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
 from unittest import TestCase
-from src.multilogue.utilities.chatgpt import (answer,
+from src.multilogue.utilities.openaia import (answer,
                                               fill_in,
                                               complete)
 
