@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 from typing import List, Dict
 from os import environ
 import requests
-import tiktoken
-# from openai import OpenAI
+from symposium.connectors import openai_native as oai
+
 
 api_key             = environ.get("OPENAI_API_KEY")
 api_key_path        = environ.get("OPENAI_API_KEY_PATH")
