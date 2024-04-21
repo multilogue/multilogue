@@ -28,6 +28,7 @@ author = InputGitAuthor(
 
 # Repo
 def creupdate_repo(repository_name,
+                   organization=organization,
                    description=None,
                    private=False):
     """
@@ -46,11 +47,11 @@ def creupdate_repo(repository_name,
                                                  private=private)
         return repo
     else:
+        user = gh.get_user()
         try:
-            repo = gh.get_repo(repository_name)
+            repo = user.get_repo(repository_name)
         except UnknownObjectException:
             template_repo = gh.get_repo(f'multilogue/multilogue-template')
-            user = gh.get_user()
             repo = user.create_repo_from_template(repository_name,
                                                   description,
                                                   template_repo,

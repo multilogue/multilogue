@@ -15,7 +15,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def main():
+def clean_up():
+    return {}
+
+
+def load_agenda():
+    pass
+
+
+def delete_record(file_path):
+    pass
+
+
+def main(agenda):
     pass
 
 
@@ -39,7 +51,7 @@ if __name__ == '__main__':
             branch = human_says
         # Create the README.md file
         this_agenda = load_agenda()
-        md_file = make_md_file(this_agenda)
+        md_file = '' # make_md_file(this_agenda)
         # Creupdate the repository
         with open('./util/config.json', 'r') as file:
             configuration = json.load(file)

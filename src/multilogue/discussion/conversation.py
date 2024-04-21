@@ -9,7 +9,11 @@ from multilogue.participants import Facilitator
 
 
 class Conversation(Facilitator):
-    """ Conversation class. """
+    """ Conversation class.
+    Conversation is managed by a facilitator.
+    The main function of the conversation is to arrange the individual threads and their records for participants, then combine them into a main protocol and
+    record of the conversation.
+    """
     facilitator = None
     issue = None
 
@@ -17,10 +21,10 @@ class Conversation(Facilitator):
         """Conversation can be initiated by a human or a machine."""
         for key, value in kwargs.items():
             setattr(self, key, value)
-        initial_suggestion = {
+        theme = {
             'issue': 'Can human nature be changed?',
         }
-        super(Conversation, self).__init__(**initial_suggestion)
+        super(Conversation, self).__init__(**theme)
         suggestion = self.suggest()
 
 

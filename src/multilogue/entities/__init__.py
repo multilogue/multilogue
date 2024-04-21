@@ -5,11 +5,8 @@
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
-from .facilitator import Facilitator
-from .interlocutor import Interlocutor
+from .entities import Entity
+from .humans import Human
+from .machines import Machine
 
-
-__all__ = [
-    'Facilitator',
-    'Interlocutor',
-]
+__all__ = ["Entity", "Human", "Machine"]

@@ -5,10 +5,11 @@
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
+from ..entities import Entity
 
-class Interlocutor(Entity, Position):
+
+class Interlocutor(Entity):
     """ multilogue interlocutor """
-
     utterance: str = ''
 
     def __init__(self, **kwargs):
